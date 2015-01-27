@@ -91,6 +91,26 @@ class Application(Frame):
                 print "Opening Image"
                 from PIL import Image;
                 myImage=Image.open(filename);
+
+                sheets = myImage.size[0]
+                height = myImage.size[1]
+
+                from tkSimpleDialog import askinteger
+                askoptions = options = {}
+                options['initialvalue'] = height
+                options['parent'] = self
+                options['minvalue'] = 50
+                options['maxvalue'] = 1000
+                newheight = askinteger("Confirm Bookheight", "Bookheight\n(in mm)", **askoptions)
+
+                options['initialvalue'] = sheets
+                options['minvalue'] = 10
+                options['maxvalue'] = 2000
+                newsheets = askinteger("Confirm sheets", "Number of sheets", **askoptions)
+
+                if((sheets != newsheets) and (height != newheight)):
+                    myImage = myImage.resize((newsheets, newheight))
+
                 from tkMessageBox import showinfo
                 #showinfo("Mode", myImage.mode)
                 #myImage.convert("L")
