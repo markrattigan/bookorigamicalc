@@ -119,8 +119,12 @@ class Application(Frame):
                 #px = myImage.load();
                 #print "Image Opened"
 
+                filename = filename +" - " + str(newheight) + "mm, " + str(newsheets) + "p"
+                myImage.save(filename)
+
                 document = OpenAndInitialiseDocX(filename)
                 print "Document opened"
+
                 CalculateAndWriteDocX(document, myImage)
 
                 saveRetry=False
