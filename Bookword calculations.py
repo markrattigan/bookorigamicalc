@@ -119,7 +119,7 @@ class Application(Frame):
                 #px = myImage.load();
                 #print "Image Opened"
 
-                filename = filename +" - " + str(newheight) + "mm, " + str(newsheets) + "p"
+                filename = filename +" - " + str(newheight) + "mm, " + str(newsheets) + "p.bmp"
                 myImage.save(filename)
 
                 document = OpenAndInitialiseDocX(filename)
