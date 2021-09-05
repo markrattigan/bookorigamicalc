@@ -13,6 +13,7 @@ from Tkinter import *
 import sys
 from BookOrigamiLib import *
 
+
 def main():
     #sys.argv[0] argument is script name
     #sys.argv[1] is bitmap name.
@@ -92,8 +93,10 @@ class Application(Frame):
                 from PIL import Image;
                 myImage=Image.open(filename);
 
+                myImage = RemoveWhiteColumns(myImage)
                 sheets = myImage.size[0]
                 height = myImage.size[1]
+                myImage.show()
 
                 from tkSimpleDialog import askinteger
                 askoptions = options = {}
@@ -110,6 +113,10 @@ class Application(Frame):
 
                 if((sheets != newsheets) and (height != newheight)):
                     myImage = myImage.resize((newsheets, newheight))
+
+                if((myImage.size[0] != newsheets) or (myImage.size[1] != newheight)):
+                    from tkMessageBox import showerror
+                    showerror("Error","Image Resize was unsuccessful!")
 
                 from tkMessageBox import showinfo
                 #showinfo("Mode", myImage.mode)
@@ -130,6 +137,8 @@ class Application(Frame):
                 saveRetry=False
                 try:
                     document.save(filename + ".docx")
+                    import os
+                    os.startfile(filename + ".docx")
                     print "Complete"
                     self.status.set("Complete")
                     break
@@ -231,7 +240,10 @@ class GenerateFromText(Frame):
 
         #offset to attempt to centre font rather than bottom aligned (upward shift by 5%)
         #print (bookheight/-20)
-        draw.text((0,(bookheight/-20)), text, fill=0, font=renderfont)
+        upshift=5
+        if(int(self.upshiftpercent.get())!=0):
+            upshift = int(self.upshiftpercent.get())
+        draw.text((0,(-bookheight*upshift/100)), text, fill=0, font=renderfont)
 
         filename = text + " using " + font + " - " + str(bookheight) + "mm, " + str(booksheets) + "p.bmp"
         image.save(filename)
@@ -252,6 +264,8 @@ class GenerateFromText(Frame):
             CalculateAndWriteDocX(document, image)
 
             document.save(filename + ".docx")
+            import os
+            os.startfile(filename + ".docx")
         #else:
             #filename is not defined, program should exit
             #print "No Filename provided to Open"
@@ -291,6 +305,10 @@ class GenerateFromText(Frame):
         self.BOOKSHEETSLABEL = Label(self, text="Number of Sheets in book: ").pack()
         self.BOOKSHEETS = Entry(self)
         self.BOOKSHEETS.pack(padx=5, pady=5)
+
+        self.upshiftpercentlabel = Label(self, text="Upwards shift in %: ").pack()
+        self.upshiftpercent = Entry(self)
+        self.upshiftpercent.pack(padx=5, pady=5)
 
         self.CANCEL = Button(self, text="Cancel", fg="red", command=self.quit)
         self.CANCEL.pack(side=RIGHT, padx=5, pady=5)
