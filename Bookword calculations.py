@@ -8,7 +8,7 @@
 # Copyright:   (c) Mark 2014
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
-from Tkinter import *
+from tkinter import *
 
 import sys
 from BookOrigamiLib import *
@@ -17,8 +17,8 @@ from BookOrigamiLib import *
 def main():
     #sys.argv[0] argument is script name
     #sys.argv[1] is bitmap name.
-    print 'Number of arguments:', len(sys.argv), 'arguments.'
-    print 'Argument List:', str(sys.argv)
+    print('Number of arguments:', len(sys.argv), 'arguments.')
+    print('Argument List:', str(sys.argv))
     filename = None
 
     if len(sys.argv) == 2: #convert bitmap from argument
@@ -37,7 +37,7 @@ def main():
 
     if filename:
         #filename is defined, thus can continue
-        print "Opening Image"
+        print("Opening Image")
         from PIL import Image;
         myImage=Image.open(filename);
         #myImage.convert("1")
@@ -55,15 +55,15 @@ def main():
             #automatically scale image appropriately for 1 pixel per sheet for width
 
         document = OpenAndInitialiseDocX(filename)
-        print "Document opened"
+        print("Document opened")
         CalculateAndWriteDocX(document, myImage)
 
         document.save(filename + ".docx")
         #todo add exception handling and ask for filename.
-        print "Complete"
+        print("Complete")
     else:
         #filename is not defined, program should exit
-        print "No Filename provided to Open"
+        print("No Filename provided to Open")
     exit()
 
 class Application(Frame):
@@ -76,7 +76,7 @@ class Application(Frame):
 
 
     def selectFile(self):
-        from tkFileDialog import askopenfilename
+        from tkinter.filedialog import askopenfilename
         #Tk().withdraw()
         global filename
         file_opt = options = {}
@@ -89,7 +89,7 @@ class Application(Frame):
             filename = askopenfilename(**file_opt)
             if filename:
                 #filename is defined, thus can continue
-                print "Opening Image"
+                print("Opening Image")
                 from PIL import Image;
                 myImage=Image.open(filename);
 
@@ -98,7 +98,7 @@ class Application(Frame):
                 height = myImage.size[1]
                 myImage.show()
 
-                from tkSimpleDialog import askinteger
+                from tkinter.simpledialog import askinteger
                 askoptions = options = {}
                 options['initialvalue'] = height
                 options['parent'] = self
@@ -115,10 +115,10 @@ class Application(Frame):
                     myImage = myImage.resize((newsheets, newheight))
 
                 if((myImage.size[0] != newsheets) or (myImage.size[1] != newheight)):
-                    from tkMessageBox import showerror
+                    from tkinter.messagebox import showerror
                     showerror("Error","Image Resize was unsuccessful!")
 
-                from tkMessageBox import showinfo
+                from tkinter.messagebox import showinfo
                 #showinfo("Mode", myImage.mode)
                 #myImage.convert("L")
                 #showinfo("Mode", myImage.mode)
@@ -130,7 +130,7 @@ class Application(Frame):
                 myImage.save(filename)
 
                 document = OpenAndInitialiseDocX(filename)
-                print "Document opened"
+                print("Document opened")
 
                 CalculateAndWriteDocX(document, myImage)
 
@@ -139,15 +139,15 @@ class Application(Frame):
                     document.save(filename + ".docx")
                     import os
                     os.startfile(filename + ".docx")
-                    print "Complete"
+                    print("Complete")
                     self.status.set("Complete")
                     break
                 except:
-                    from tkMessageBox import askretrycancel
+                    from tkinter.messagebox import askretrycancel
                     saveretry = askretrycancel("Error", "Cannot save to selected file. Try again?")
 
                 while saveretry:
-                    from tkMessageBox import asksaveasfile
+                    from tkinter.messagebox import asksaveasfile
                     file_opt = options = {}
                     options['defaultextension'] = '.docx'
                     options['filetypes'] = [('Word DOCX', '.docx')]
@@ -155,22 +155,22 @@ class Application(Frame):
                     filename = askopenfilename(**file_opt)
                     try:
                         document.save(filename)
-                        print "Complete"
+                        print("Complete")
                         status.set("Complete")
                         break
                     except:
-                        from tkMessageBox import askretrycancel
+                        from tkinter.messagebox import askretrycancel
                         status.set("Could not save file")
                         saveretry = askretrycancel("Error", "Cannot save to selected file. Try again?")
 
             else:
-                from tkMessageBox import askretrycancel
+                from tkinter.messagebox import askretrycancel
                 #statusvar.set("Could not Open File for Import")
                 loadretry = askretrycancel("Error", "File for Import was not selected. Try again?")
                 if loadretry==False:
                     self.status.set("Not able to Import")
 
-        from tkMessageBox import showinfo
+        from tkinter.messagebox import showinfo
         #showinfo("", self.status.get())
 
     def createWidgets(self):
@@ -195,7 +195,7 @@ class Application(Frame):
 
 
     def centreWindow(self, width, height):
-        self.parent.geometry(str(width) +"x" + str(height) + "+" + str((self.parent.winfo_screenwidth()-width)/2) + "+" + str((self.parent.winfo_screenheight()-height)/2))
+        self.parent.geometry(str(width) +"x" + str(height) + "+" + str(round((self.parent.winfo_screenwidth()-width)/2)) + "+" + str(round((self.parent.winfo_screenheight()-height)/2)))
 
     def __init__(self, parent=None):
         Frame.__init__(self, parent)
@@ -220,14 +220,14 @@ class GenerateFromText(Frame):
         text = str(self.RENDERTEXT.get())
         font = self.SelectedFont.get()
 
-        print text + " using font " + font
-        print str(bookheight) + "mm high, " + str(booksheets) + " sheets wide"
+        print(text + " using font " + font)
+        print(str(bookheight) + "mm high, " + str(booksheets) + " sheets wide")
 
         from PIL import Image, ImageFont, ImageDraw
         IMAGEMODE = "1" #monochrome bitmap
         #create monochrome bitmap image, 10*booksheets wide, bookheight high, 0=black, 1=white
         image = Image.new(IMAGEMODE, (booksheets*10,bookheight), 1)
-        from tkMessageBox import showinfo
+        from tkinter.messagebox import showinfo
         #showinfo("Mode", image.mode)
 
         draw = ImageDraw.Draw(image)
@@ -235,8 +235,8 @@ class GenerateFromText(Frame):
         fontheight = bookheight
 
         renderfont = ImageFont.truetype(font,fontheight)
-        print "Text Size " + str(draw.textsize(text, renderfont))
-        print "Image Size " + str(image.size)
+        print("Text Size " + str(draw.textsize(text, renderfont)))
+        print("Image Size " + str(image.size))
 
         #offset to attempt to centre font rather than bottom aligned (upward shift by 5%)
         #print (bookheight/-20)
@@ -255,11 +255,11 @@ class GenerateFromText(Frame):
 
 
         image.show()
-        from tkMessageBox import askyesno
+        from tkinter.messagebox import askyesno
         if(askyesno("Continue?", "Preview ok? Continue?")):
         #print px
             document = OpenAndInitialiseDocX(filename)
-            print "Document opened"
+            print("Document opened")
 
             CalculateAndWriteDocX(document, image)
 
@@ -292,10 +292,10 @@ class GenerateFromText(Frame):
         self.SelectedFont = StringVar()
         import os
         fontlist = os.listdir("c:\\windows\\fonts\\")
-        fontlist = filter(fontNameContainsTTF, fontlist) #remove non TTF
+        fontlist = list(filter(fontNameContainsTTF, fontlist)) #remove non TTF
         self.FONTBOXLABEL = Label(self, text="Font: ").pack()
         self.SelectedFont.set(fontlist[147])
-        self.FONTSELECT = apply(OptionMenu, (self, self.SelectedFont) + tuple(fontlist))
+        self.FONTSELECT = OptionMenu(*(self, self.SelectedFont) + tuple(fontlist))
         self.FONTSELECT.pack()
 
         self.BOOKHEIGHTLABEL = Label(self, text="Height of book in mm: ").pack()
@@ -335,7 +335,7 @@ class GenerateFromText(Frame):
 ##
 
     def centreWindow(self, width, height):
-        self.parent.geometry(str(width) +"x" + str(height) + "+" + str((self.parent.winfo_screenwidth()-width)/2) + "+" + str((self.parent.winfo_screenheight()-height)/2))
+        self.parent.geometry(str(width) +"x" + str(height) + "+" + str(round((self.parent.winfo_screenwidth()-width)/2)) + "+" + str(round((self.parent.winfo_screenheight()-height)/2)))
 
 
 

@@ -10,7 +10,7 @@
 #-------------------------------------------------------------------------------
 from docx import Document
 from docx.shared import Mm
-import PythonMagick
+#import PythonMagick
 
 def main():
     pass
@@ -105,7 +105,7 @@ def CalculateAndWriteDocX(document, myImage):
         count = 0
         repeats = 0
 
-    from tkMessageBox import askyesno
+    from tkinter.messagebox import askyesno
     keepallfolds = askyesno("Keep all folds?", "Do you want to keep all folds?")
 
     if not keepallfolds:
@@ -122,11 +122,11 @@ def CalculateAndWriteDocX(document, myImage):
             currentpagefolds = imgFoldDimensions[page-1][1]
             numberofFolds = len(currentpagefolds)
 
-            print numberofFolds
+            print(numberofFolds)
             if numberofFolds == 1:
                 currentfold = 1
                 Dims = imgFoldDimensions[page-1][1][0]
-                print Dims
+                print(Dims)
                 PrintLine(document, page, Dims[0], Dims[1], Dims[2])
                 #print str(page) + " " + str(Dims[0]) + " " + str(Dims[1]) + " " + str(Dims[2])
             else: #there is more than one section for this sheet
@@ -134,7 +134,7 @@ def CalculateAndWriteDocX(document, myImage):
                     currentfold = 1
                 Dims = imgFoldDimensions[page-1][1][currentfold-1]
                 PrintLine(document, page, Dims[0], Dims[1], Dims[2])
-                print str(page) + " " + str(Dims[0]) + " " + str(Dims[1]) + " " + str(Dims[2])
+                print(str(page) + " " + str(Dims[0]) + " " + str(Dims[1]) + " " + str(Dims[2]))
                 currentfold += 1
                 continue
     else:
@@ -151,11 +151,11 @@ def CalculateAndWriteDocX(document, myImage):
             currentpagefolds = imgFoldDimensions[page-1][1]
             numberofFolds = len(currentpagefolds)
 
-            print numberofFolds
+            print(numberofFolds)
             for fold in currentpagefolds:
-                print fold
+                print(fold)
                 Dims = fold
-                print Dims
+                print(Dims)
                 PrintLine(document, page, Dims[0], Dims[1], Dims[2])
             #if numberofFolds == 1:
             #    currentfold = 1
