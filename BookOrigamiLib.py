@@ -10,6 +10,7 @@
 #-------------------------------------------------------------------------------
 from docx import Document
 from docx.shared import Mm
+import PythonMagick
 
 def main():
     pass
@@ -27,6 +28,8 @@ def OpenAndInitialiseDocX(filename):
 def CalculateAndWriteDocX(document, myImage):
     px = myImage.load()
     document.add_paragraph(str(myImage.size[1]) + "mm * " + str(myImage.size[0]) + " sheets")
+
+
     #from tkMessageBox import showinfo
     #showinfo("Image Mode", str(myImage.mode))
     #for each column of image
@@ -102,35 +105,72 @@ def CalculateAndWriteDocX(document, myImage):
         count = 0
         repeats = 0
 
-    #at this point, each page with folds is listed in imgFoldDimensions list
-    #print imgFoldDimensions
-    currentfold=1
-    for page in range(1,len(imgFoldDimensions)+1):
-        #imgFoldDimensions is a list of lists
-        #imgFoldDimensions[page-1] is a list, containing page number[0] and then a list of tuples[1]
-        #print imgFoldDimensions[page-1] # this prints that list
-        # page # = imgFoldDimensions[page-1][0]
-        # list of tuples of folds is imgFoldDimensions[page-1][1]
+    from tkMessageBox import askyesno
+    keepallfolds = askyesno("Keep all folds?", "Do you want to keep all folds?")
 
-        currentpagefolds = imgFoldDimensions[page-1][1]
-        numberofFolds = len(currentpagefolds)
+    if not keepallfolds:
+        #at this point, each page with folds is listed in imgFoldDimensions list
+        #print imgFoldDimensions
+        currentfold=1
+        for page in range(1,len(imgFoldDimensions)+1):
+            #imgFoldDimensions is a list of lists
+            #imgFoldDimensions[page-1] is a list, containing page number[0] and then a list of tuples[1]
+            #print imgFoldDimensions[page-1] # this prints that list
+            # page # = imgFoldDimensions[page-1][0]
+            # list of tuples of folds is imgFoldDimensions[page-1][1]
 
-        print numberofFolds
-        if numberofFolds == 1:
-            currentfold = 1
-            Dims = imgFoldDimensions[page-1][1][0]
-            print Dims
-            PrintLine(document, page, Dims[0], Dims[1], Dims[2])
-            #print str(page) + " " + str(Dims[0]) + " " + str(Dims[1]) + " " + str(Dims[2])
-        else: #there is more than one section for this sheet
-            if currentfold > numberofFolds:
+            currentpagefolds = imgFoldDimensions[page-1][1]
+            numberofFolds = len(currentpagefolds)
+
+            print numberofFolds
+            if numberofFolds == 1:
                 currentfold = 1
-            Dims = imgFoldDimensions[page-1][1][currentfold-1]
-            PrintLine(document, page, Dims[0], Dims[1], Dims[2])
-            print str(page) + " " + str(Dims[0]) + " " + str(Dims[1]) + " " + str(Dims[2])
-            currentfold += 1
-            continue
+                Dims = imgFoldDimensions[page-1][1][0]
+                print Dims
+                PrintLine(document, page, Dims[0], Dims[1], Dims[2])
+                #print str(page) + " " + str(Dims[0]) + " " + str(Dims[1]) + " " + str(Dims[2])
+            else: #there is more than one section for this sheet
+                if currentfold > numberofFolds:
+                    currentfold = 1
+                Dims = imgFoldDimensions[page-1][1][currentfold-1]
+                PrintLine(document, page, Dims[0], Dims[1], Dims[2])
+                print str(page) + " " + str(Dims[0]) + " " + str(Dims[1]) + " " + str(Dims[2])
+                currentfold += 1
+                continue
+    else:
+        #at this point, each page with folds is listed in imgFoldDimensions list
+        #print imgFoldDimensions
+        currentfold=1
+        for page in range(1,len(imgFoldDimensions)+1):
+            #imgFoldDimensions is a list of lists
+            #imgFoldDimensions[page-1] is a list, containing page number[0] and then a list of tuples[1]
+            #print imgFoldDimensions[page-1] # this prints that list
+            # page # = imgFoldDimensions[page-1][0]
+            # list of tuples of folds is imgFoldDimensions[page-1][1]
 
+            currentpagefolds = imgFoldDimensions[page-1][1]
+            numberofFolds = len(currentpagefolds)
+
+            print numberofFolds
+            for fold in currentpagefolds:
+                print fold
+                Dims = fold
+                print Dims
+                PrintLine(document, page, Dims[0], Dims[1], Dims[2])
+            #if numberofFolds == 1:
+            #    currentfold = 1
+            #    Dims = imgFoldDimensions[page-1][1][0]
+            #    print Dims
+            #    PrintLine(document, page, Dims[0], Dims[1], Dims[2])
+                #print str(page) + " " + str(Dims[0]) + " " + str(Dims[1]) + " " + str(Dims[2])
+            #else: #there is more than one section for this sheet
+            #    if currentfold > numberofFolds:
+            #        currentfold = 1
+            #    Dims = imgFoldDimensions[page-1][1][currentfold-1]
+            #    PrintLine(document, page, Dims[0], Dims[1], Dims[2])
+            #    print str(page) + " " + str(Dims[0]) + " " + str(Dims[1]) + " " + str(Dims[2])
+            #    currentfold += 1
+            #    continue
 
 
 def PrintLine(document, sheet, start, length, end):
@@ -144,9 +184,9 @@ def PrintLine(document, sheet, start, length, end):
     p = document.add_paragraph("Start: ")
     p.add_run(str(start))
     p.add_run("mm ")
-    p.add_run("Len: ")
-    p.add_run(str(length))
-    p.add_run("mm ")
+    #p.add_run("Len: ")
+    #p.add_run(str(length))
+    #p.add_run("mm ")
     p.add_run("End: ")
     p.add_run(str(end))
     p.add_run("mm")
@@ -174,7 +214,3 @@ def RemoveWhiteColumns(myImage):
             currentoutputcol += 1
     out = out.crop((0,0,currentoutputcol, pixel+1))
     return out
-
-
-
-
