@@ -1,7 +1,7 @@
 Prerequisites:
 
-python 2.7
-PIL/pillow ==2.8.2 
+python 3.x
+PIL/pillow 
 python-docx
-lxml==3.6.0
+lxml
 tkinter (built in)
